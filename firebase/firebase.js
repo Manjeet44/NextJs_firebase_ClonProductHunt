@@ -1,11 +1,15 @@
 import { initializeApp } from 'firebase/app';
 import {createUserWithEmailAndPassword, getAuth, updateProfile, signInWithEmailAndPassword, signOut} from 'firebase/auth';
 import firebaseConfig from './config';
+import { getFirestore } from 'firebase/firestore';
+import {getStorage} from 'firebase/storage';
 
 class Firebase {
     constructor() {
-        initializeApp(firebaseConfig);
+        this.app = initializeApp(firebaseConfig);
         this.auth = getAuth();
+        this.db = getFirestore();
+        this.storage = getStorage(this.app);
     }
 
     //Registra un usuario
@@ -26,5 +30,5 @@ class Firebase {
     }
 }
 
-export const firebase = new Firebase();
+const firebase = new Firebase();
 export default firebase;
