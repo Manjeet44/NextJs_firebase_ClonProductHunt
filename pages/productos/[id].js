@@ -2,7 +2,7 @@ import React, {useEffect, useContext, useState} from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../../components/layout/Layout';
 import { FirebaseContext } from '../../firebase';
-import { getDoc, doc, updateDoc } from "firebase/firestore";
+import { getDoc, doc, updateDoc, deleteDoc } from "firebase/firestore";
 import Error404 from '../../components/layout/Error404';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -126,6 +126,27 @@ const Producto = () => {
     //Funcion que revisa que el creador del producto sea el mismo que esta autenticado
     const puedeBorrar = () => {
         if(!usuario) return false;
+        if(creador.id === usuario.uid) {
+            return true
+        }
+    }
+
+    // Elimina un producto de la BD
+    const eliminarProducto = async () => {
+        if(!usuario) {
+            return router.push('/login')
+        }
+
+        if(creador.id !== usuario.uid) {
+            return router.push('/')
+        }
+
+        try {
+            await deleteDoc(doc(firebase.db, "productos", id));
+            router.push('/')
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     return (
@@ -230,6 +251,11 @@ const Producto = () => {
                                 
                             </aside>
                         </ContenedorProducto>
+                        {puedeBorrar() && 
+                            <Boton
+                                onClick={eliminarProducto}
+                            >Eliminar Producto</Boton>
+                        }
                     </div>
                 )}
                 
